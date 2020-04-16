@@ -5,13 +5,12 @@ package com.Karse.event.entity;
  *
  */
 public class UserInfo {
-	public int id;  //编号
-	public String name;   //用户姓名
-	public int age;   //年龄
-	public enum sex{  //性别
-		男,女
-	}
-	public double account;  //账户余额
+	private int id;  //编号
+	private String name;   //用户姓名
+	private int age;   //年龄
+	private int sex;
+	private double account;  //账户余额
+	
 	public int getId() {
 		return id;
 	}

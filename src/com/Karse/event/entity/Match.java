@@ -6,19 +6,42 @@ import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.xml.crypto.Data;
 
 public class Match {
-	public int id;  //编号
-	public String name;  //赛事名
-	public Date time;
+	private int id;  //编号
+	private String team1;  //战队1
+	private String team2; //战队2
+	private String time;  //比赛时间
+	private int price;   //比赛价格
+	
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getName() {
-		return name;
+	public String getTeam1() {
+		return team1;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setTeam1(String team1) {
+		this.team1 = team1;
 	}
+	public String getTeam2() {
+		return team2;
+	}
+	public void setTeam2(String team2) {
+		this.team2 = team2;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	
+
 }

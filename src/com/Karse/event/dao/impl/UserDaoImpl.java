@@ -10,13 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.Karse.event.dao.UserDao;
 import com.Karse.event.entity.User;
+import com.Karse.event.util.isEmpty;
+import com.jgoodies.forms.factories.Borders.EmptyBorder;
 /**
- * 封装jdbc增删改查数据库的方法
+ * 封装jdbc用户账号信息增删改查数据库的方法
  * @author Karse
  *
  */
-public class UserDaoImpl {
+
+
+public class UserDaoImpl implements UserDao{
 	//注册驱动放在构造方法里，因为只需执行一次
 	public UserDaoImpl(){
 		//注册驱动
@@ -27,7 +32,7 @@ public class UserDaoImpl {
 			e.printStackTrace();
 		}	
 	}
-
+	
 	
 	public Connection getConnection() throws SQLException{
 		/**
@@ -43,10 +48,16 @@ public class UserDaoImpl {
 		return conn;
 	}
 	
-	public User login(String name,String password) {
-		/**
-		 * 登录验证
-		 */
+	
+	/**
+	 * 登陆方法
+	 * @param Username 用户名
+	 * @param password 密码
+	 */
+
+	
+	@Override
+	public User selectUserByPassword(String name, String password) {
 		User resultUser = null; //用于返回
 		String sql = "select * from t_user where name=? and password=?";
 		try(Connection conn = getConnection() ;PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -66,11 +77,38 @@ public class UserDaoImpl {
 		return resultUser;
 	}
 	
+	
+	public boolean adminNameEmpty(String name){
+		boolean flag = true;  //扩展作用域
+		String sql = "select * from t_admin where name=? ";
+		try(Connection conn = getConnection() ;PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, name);
+			ResultSet rs = ps.executeQuery();
+			//判断数据库是否有该账号
+			if(rs.next()){
+				flag = true; 				
+			}
+			else{
+				//返回false
+				flag = false;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return flag;
+	}
+	
+	/**
+	 * 注册账号查询是否存在该用户
+	 * @param name
+	 * @return
+	 */
 	public boolean isNameEmpty(String name) {
 		/**
-		 * 查询数据库中是否存在该用户名
+		 * 查询t_user表中是否存在该用户名
 		 */
-		boolean flag = (Boolean) null;  //扩展作用域
+		boolean flag = true; 
 		String sql = "select * from t_user where name=? ";
 		try(Connection conn = getConnection() ;PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, name);
@@ -78,7 +116,30 @@ public class UserDaoImpl {
 			//判断数据库是否有该账号
 			if(rs.next()){
 				flag = true;
-				
+			}else{
+				flag = false;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return flag;
+		
+	}
+	
+	
+	public boolean isPasswordEmpty(String password) {
+		/**
+		 * 查询t_user表中是否存在该密码
+		 */
+		boolean flag = true;  //扩展作用域
+		String sql = "select * from t_user where password=? ";
+		try(Connection conn = getConnection() ;PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, password);
+			ResultSet rs = ps.executeQuery();
+			//判断数据库是否有该账号
+			if(rs.next()){
+				flag = true; 				
 			}
 			else{
 				//返回false
@@ -91,6 +152,31 @@ public class UserDaoImpl {
 		return flag;
 		
 	}
+	
+	public boolean addUser(String name,String password){
+		/**
+		 * 将对象信息插入数据库
+		 */
+		boolean flag = true;
+		String sql = "insert into t_user values(null,?,?)";	
+		try(Connection conn = getConnection() ;PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			//插入数据
+			ps.setString(1, name);
+			ps.setString(2,password);
+			int count = ps.executeUpdate();
+			if(count == 1){
+				flag = true;
+			}else{
+				flag = false;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return flag;			
+	}
+	
 	
 //	public int getTotal(){
 //		/**
@@ -139,24 +225,7 @@ public class UserDaoImpl {
 //		return u;					
 //	}
 //	
-	public void addUser(String name,String password){
-		/**
-		 * 将对象信息插入数据库
-		 */
-		String sql = "insert into t_user values(null,?,?)";	
-		try(Connection conn = getConnection() ;PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			//插入数据
-			ps.setString(1, name);
-			ps.setString(2,password);
-			//执行sql语句
-			ps.execute();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-					
-	}
 //	
 //	public void delete(User u){
 //		/**

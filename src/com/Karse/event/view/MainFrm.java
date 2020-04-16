@@ -49,7 +49,7 @@ public class MainFrm extends JFrame {
 	public MainFrm() {
 		setTitle("LOL\u9009\u7968\u7CFB\u7EDF");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 709, 476);
+		setBounds(100, 100, 1200, 700);
 		setLocationRelativeTo(null);
 		
 		JMenuBar menuBar = new JMenuBar();

@@ -1,10 +1,11 @@
 package com.Karse.event.entity;
 
 public class Order {
-	public int id;  //编号
-	public int content;  //订单内容，外键，连接赛事id
-	public int number;   //购买票数
-	public double price;  //支付金额
+	private int id;  //编号
+	private int content;  //订单内容，外键，连接赛事id
+	private int number;   //购买票数
+	private double price;  //支付金额
+	
 	public int getId() {
 		return id;
 	}

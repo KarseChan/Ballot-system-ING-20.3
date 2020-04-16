@@ -7,12 +7,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.Karse.event.dao.impl.UserDaoImpl;
+import com.Karse.event.util.isEmpty;
+import com.Karse.event.controller.UserController;
+import com.Karse.event.dao.impl.*;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
+import java.awt.Frame;
+
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
@@ -21,9 +27,12 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 public class RegisterFrm extends JFrame {
 
+	private RegisterFrm frame;
 	private JPanel contentPane;
 	private JTextField textField; //用户名输入
 	private JPasswordField passwordField;  //密码输入
@@ -31,6 +40,8 @@ public class RegisterFrm extends JFrame {
 	private JButton button;
 	private JButton button_1;
 	private JLabel label_4;
+	
+	private static UserController userController = new UserController();
 
 	/**
 	 * Launch the application.
@@ -51,6 +62,7 @@ public class RegisterFrm extends JFrame {
 	public void IntoRegisterFrm(){
 		/**
 		 * 登录界面调用此方法进入注册界面
+		 * 实例注册界面类对象，使界面可视化
 		 */
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -64,13 +76,14 @@ public class RegisterFrm extends JFrame {
 		});
 	}
 	
+	
 
 	/**
 	 * Create the frame.
 	 */
 	public RegisterFrm() {
 		setTitle("\u6CE8\u518C");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 871, 509);
 		setLocationRelativeTo(null);
 		contentPane = new JPanel();
@@ -100,21 +113,28 @@ public class RegisterFrm extends JFrame {
 		
 		passwordField_1 = new JPasswordField();
 		
-		JButton button = new JButton("\u6CE8\u518C");
-		button.addActionListener(new ActionListener() {
+		//返回按钮
+		JButton button_1 = new JButton("\u8FD4\u56DE");
+		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//增加”成功注册“监听
-				SuccessRegisterPerformed(e);
+				//返回监听
+				backActionPerformed(e);
 			}
 		});
 		
-		JButton button_1 = new JButton("\u8FD4\u56DE");
+		JButton btnNewButton = new JButton("\u6CE8\u518C");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//注册监听
+				registerActionPerformed(e);
+			}
+		});
 		
 		
 		//布局
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
@@ -135,11 +155,11 @@ public class RegisterFrm extends JFrame {
 										.addComponent(textField, GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))))))
 					.addGap(304))
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(327)
-					.addComponent(button)
-					.addGap(74)
+					.addGap(315)
+					.addComponent(btnNewButton)
+					.addGap(66)
 					.addComponent(button_1)
-					.addContainerGap(316, Short.MAX_VALUE))
+					.addContainerGap(286, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -161,35 +181,53 @@ public class RegisterFrm extends JFrame {
 					.addGap(45)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(button_1, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-						.addComponent(button))
+						.addComponent(btnNewButton))
 					.addContainerGap(89, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	protected void SuccessRegisterPerformed(ActionEvent e) {
-		// 调用UserDaoImpl里的  判断是否存在该用户名方法		
-		if(new UserDaoImpl().isNameEmpty(textField.getText()) == true){
-		    //该账户存在，则在界面输出”该账户已存在“
-			JLabel j1 = new JLabel();
-			j1.setText("该用户名已存在！");
-			j1.setFont(new Font("微软雅黑", Font.PLAIN, 18));
-			j1.setForeground(Color.RED);
-			j1.setLocation(435, 290);
-			
-					
-		}
-		else if(passwordField.getText().equals(passwordField_1.getText())){
-			//判断输入密码和确认密码相同，将用户名密码插入数据库
-			new UserDaoImpl().addUser(textField.getText(), passwordField.getText());
-			//在界面输出”注册成功“
-			JLabel j2 = new JLabel();
-			j2.setText("注册成功！");
-			j2.setFont(new Font("微软雅黑", Font.PLAIN, 18));
-			j2.setForeground(Color.RED);
-			j2.setLocation(435, 290);
-			
-		}
+
+
+	protected void backActionPerformed(ActionEvent e) {
+		// 返回处理事件
+		//销毁注册框，显示登录框
+//		this.frame.dispose();
+		LoginFrame loginFrame = new LoginFrame();
+		loginFrame.setVisible(true);
+		
 		
 	}
+
+	protected void registerActionPerformed(ActionEvent e) {
+		// 注册处理事件
+		String userName = this.textField.getText();
+		String password = this.passwordField.getText();
+		String isRight = this.passwordField_1.getText();
+		 if(isEmpty.isEmpty(userName)){
+			//用户名输入为空
+			JOptionPane.showMessageDialog(null, "用户名不能为空");
+			return;  //结束
+		}else if(isEmpty.isEmpty(password)){
+			//密码输入为空
+			JOptionPane.showMessageDialog(null, "密码不能为空");
+			return;	
+		}else if(isEmpty.isEmpty(isRight)){
+			//确认密码输入为空
+			JOptionPane.showMessageDialog(null, "确认密码不能为空");
+			return;	
+		}else if(!password.equals(isRight)){
+			//密码不正确
+			JOptionPane.showMessageDialog(null, "两次输入的密码不一致！");
+			return;  
+		}else if(userController.register(userName)){
+			//用户名存在
+			JOptionPane.showMessageDialog(null, "该用户名已存在！");
+			return;  
+		}else if(userController.successRegister(userName, password)){	
+			JOptionPane.showMessageDialog(null, "注册成功！");
+
+		}
+	}
+
 }

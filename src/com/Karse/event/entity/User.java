@@ -8,9 +8,11 @@ import java.util.List;
  *
  */
 public class User {
-	public int id;  //±àºÅ
-	public String name;  //ÕËºÅÃû
-	public String password; //ÃÜÂë
+	private int id;  //±àºÅ
+	private String name;  //ÕËºÅÃû
+	private String password; //ÃÜÂë
+	private int role; //È¨ÏŞ
+	
 	public int getId() {
 		return id;
 	}
@@ -29,5 +31,13 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public int getRole() {
+		return role;
+	}
+	public void setRole(int role) {
+		this.role = role;
+	}
+	
+
 
 }
